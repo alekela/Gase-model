@@ -1,7 +1,5 @@
 import pygame
 from random import randint
-import numpy as np
-import matplotlib.pyplot as plt
 
 
 def fact(x):
@@ -33,7 +31,7 @@ class Canvas:
         pygame.draw.rect(scene, 'black', (0, 0, self.width, self.height), width=300)
         # pygame.draw.rect(scene, 'white', (0, 0, self.width, self.height), width=5)
         pygame.draw.rect(scene, 'yellow', ((self.width - self.region) // 2, self.height // 2 - self.region // 2,
-                                        self.region, self.region), width=1)
+                                           self.region, self.region), width=1)
         for ball in balls:
             pygame.draw.circle(scene, 'white', (ball.x, ball.y), 2 * ball.radius)
 
@@ -48,7 +46,7 @@ class Canvas:
             if ball.y < r + 1 or ball.y > self.width - r - 1:
                 ball.Vy = -ball.Vy
                 ball.y = r + 1 if ball.y < self.width // 2 else self.width - r - 1
-            for j in range(i + 1, len(balls)):
+            """for j in range(i + 1, len(balls)):
                 ball2 = balls[j]
                 if ball != ball2 and abs(ball.x - ball2.x) <= 2 * r + 1 and abs(ball.y - ball2.y) <= 2 * r + 1:
                     dx = (ball2.x - ball.x)
@@ -57,53 +55,10 @@ class Canvas:
                     Vy = ball.Vy
                     V2x = ball2.Vx
                     V2y = ball2.Vy
-                    dy = -dy
-                    Vy = - Vy
-                    V2y = - V2y
-
-                    r = (dx * dx + dy * dy) ** 0.5
-                    if r == 0:
-                        r = 2 * ball.radius
-                    cosax = dx / r
-                    sinax = (1 - cosax * cosax) ** 0.5
-                    if dy < 0:
-                        sinax = - sinax
-
-                    cosay = dy / r
-                    sinay = (1 - cosay * cosay) ** 0.5
-                    if dx > 0:
-                        sinay = -sinay
-
-                    Vxn = Vx * cosax + Vy * sinax
-                    Vyn = Vy * cosax - Vx * sinax
-                    V2xn = V2x * cosax + V2y * sinax
-                    V2yn = V2y * cosax - V2x * sinax
-
-                    ball.Vx = V2xn * cosax + Vyn * sinax
-                    ball.Vy = -(Vyn * cosax - V2xn * sinax)
-                    ball2.Vx = Vxn * cosax + V2yn * sinax
-                    ball2.Vy = -(V2yn * cosax - Vxn * sinax)
-                    ball.move(5 * dt)
-                    ball2.move(5 * dt)
-
-                    """dx = (ball2.x - ball.x)
-                    dy = (ball2.y - ball.y)
-                    Vx = ball.Vx
-                    Vy = ball.Vy
-                    V2x = ball2.Vx
-                    V2y = ball2.Vy
-                    ball.Vx = (dx * (V2x * dx + V2y * dy) - abs(dy) * (-Vx * dy + Vy * dx)) / (
-                                4 * ball.radius)
-                    ball.Vy = (abs(dy) * (V2x * dx + V2y * dy) + dx * (-Vx * dy + Vy * dx)) / (
-                                4 * ball.radius)
-                    ball2.Vx = (dx * (Vx * dx + Vy * dy) + abs(dy) * (-V2x * dy + V2y * dx)) / (
-                                4 * ball.radius)
-                    ball2.Vy = (-abs(dy) * (Vx * dx + Vy * dy) + dx * (-V2x * dy + V2y * dx)) / (
-                                4 * ball.radius)
-                    ball.move(5 * dt)
-                    ball2.move(5 * dt)"""
-
-
+                    ball.Vx = (dx * dx * V2x + dx * dy * (V2y - Vy) + dy * dy * Vx) / (dx * dx + dy * dy)
+                    ball.Vy = (dy * dy * V2y + dx * dy * (V2x - Vx) + dx * dx * Vy) / (dx * dx + dy * dy)
+                    ball2.Vx = (dx * dx * Vx + dx * dy * (Vy - V2y) + dy * dy * V2x) / (dx * dx + dy * dy)
+                    ball2.Vy = (dy * dy * Vy + dx * dy * (Vx - V2x) + dx * dx * V2y) / (dx * dx + dy * dy)"""
 
             if (abs(self.width // 2 - ball.x) <= self.region // 2 and abs(
                     self.height // 2 - ball.y) <= self.region // 2):
@@ -123,7 +78,7 @@ class Ball:
     def move(self, dt):
         self.x += self.Vx * dt
         self.y += self.Vy * dt
-        #self.Vy += F / m * dt
+        # self.Vy += F / m * dt
 
 
 e = 2.71828183
@@ -131,10 +86,10 @@ pi = 3.14159265
 width = 600
 height = 600
 number_of_particles = 200
-v = 40
+v = 60
 
-#m = 1
-#F = 0
+# m = 1
+# F = 0
 
 
 screen = pygame.display.set_mode((width, height))
@@ -154,7 +109,7 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
-            print("Экспериментальное среднее n:", all_count / count_time)
+            print("Модельное среднее n:", all_count / count_time)
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 f = 1 if f == 0 else 0
@@ -167,7 +122,8 @@ while running:
     pygame.display.flip()
 
 n_sr = number_of_particles * v * v / width / height
-oy_Puasson = [func_Puasson(i) for i in range(number_of_particles // 2)]
+print("Теоретическое значение среднего:", n_sr)
+"""oy_Puasson = [func_Puasson(i) for i in range(number_of_particles // 2)]
 
 oy_Gauss = [func_Gauss(i, n_sr) for i in range(number_of_particles // 2)]
 oy_binom = [func_binom(i, number_of_particles, v, height) for i in range(number_of_particles // 2)]
@@ -193,9 +149,9 @@ oy_Gauss = [func_Gauss(i / 10, n_sr) for i in range(number_of_particles // 2 * 1
 plt.plot(np.asarray(ox), np.asarray(count_balls))
 plt.plot(np.asarray(ox), np.asarray(oy_binom))
 print(count_balls)
-#plt.plot(np.asarray(ox), np.asarray(oy_Puasson))
-#plt.plot(np.asarray(oxGauss), np.asarray(oy_Gauss))
+# plt.plot(np.asarray(ox), np.asarray(oy_Puasson))
+# plt.plot(np.asarray(oxGauss), np.asarray(oy_Gauss))
 ax.grid()
 ax.legend(['Модельная зависимость', 'Биномиальное распределение'])
 
-plt.show()
+plt.show()"""
